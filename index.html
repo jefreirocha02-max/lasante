@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4a2633">
+<meta name="mobile-web-app-capable" content="yes">
+<title>La Santé — Agenda</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f1ec; --card:#fffaf6; --ink:#2b1f22; --muted:#8a7570; --line:#ead9cf;
+  --wine:#4a2633; --brand:#6b3a4a; --brand2:#8c4f61; --gold:#b98d58; --gold2:#d9b98a; --soft:#f3e4dc;
+  --ok:#5f8a6b; --warn:#b98d58; --alert:#c0674f; --crit:#a83a4a;
+  --c-facial:#b5838d; --c-corporal:#6d8b74; --c-olhar:#c29a5b; --c-aval:#7a6c9a; --c-capilar:#9a6f52; --c-outro:#9a9290; --c-google:#c7bdb8;
+  --serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --sans:Jost,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --shadow:0 1px 2px rgba(74,38,51,.06),0 6px 20px rgba(74,38,51,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#171113; --card:#211a1d; --ink:#f3e9e4; --muted:#b19f99; --line:#3a2d31;
+    --wine:#120c0e; --brand:#d8a7b1; --brand2:#d8a7b1; --gold:#d6b07c; --gold2:#e7cc9f; --soft:#2c2125;
+    --ok:#8fbf9a; --warn:#d6b07c; --alert:#e8937c; --crit:#f08a98;
+    --c-facial:#d8a7b1; --c-corporal:#9cc0a3; --c-olhar:#e0bd84; --c-aval:#b1a4d6; --c-capilar:#cc9d7e; --c-outro:#b5aeac; --c-google:#5a4e52;
+    --shadow:none;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:.2px}
+
+header.top{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,var(--wine),#6b3a4a 70%,#7d4a59);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+@media (prefers-color-scheme: dark){header.top{background:linear-gradient(135deg,#120c0e,#2a1a20)}}
+.mono{width:44px;height:44px;border-radius:50%;flex:0 0 44px;position:relative;display:grid;place-items:center;border:1px solid rgba(217,185,138,.7);background:rgba(255,255,255,.04);overflow:hidden}
+.mono span{font-family:var(--serif);font-style:italic;font-size:21px;color:var(--gold2);letter-spacing:-1px}
+.mono img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.brandtxt{flex:1;min-width:0}
+.brandtxt h1{margin:0;font-size:23px;line-height:1;font-weight:600}
+.brandtxt .sub{font-size:10.5px;letter-spacing:2.2px;text-transform:uppercase;color:var(--gold2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{background:transparent;border:0;color:inherit;padding:8px;border-radius:10px;cursor:pointer;display:grid;place-items:center}
+.statusline{font-size:11.5px;color:var(--muted);text-align:center;padding:6px 0 0}
+
+main{max-width:680px;margin:0 auto;padding:12px 16px 100px}
+.tab{display:none}.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h2{font-size:21px;margin:0 0 10px}
+.muted{color:var(--muted)} .small{font-size:12.5px}
+.row{display:flex;gap:8px;align-items:center}.row.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:10px 16px;cursor:pointer;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;color:var(--ink)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+@media (prefers-color-scheme: dark){.btn.primary{color:#1a1113}}
+.btn.gold{background:transparent;border-color:var(--gold);color:var(--gold)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.danger{color:var(--crit)}
+.btn:disabled{opacity:.5}
+input[type=text],input[type=tel],input[type=number],input[type=date],input[type=time],input[type=url],input[type=password],input[type=email],input[type=search],select,textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:9px 11px;outline:none;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{min-height:64px;resize:vertical}
+label.f{display:block;font-size:12.5px;color:var(--muted);margin:8px 0 4px}
+
+.hero{border-radius:20px;padding:18px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden;min-height:120px;
+  background:linear-gradient(180deg,rgba(43,20,28,.15),rgba(43,20,28,.78)),url(capa.jpg) center/cover,linear-gradient(135deg,#8c4f61,#4a2633)}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;border:1px solid rgba(217,185,138,.35)}
+.hero .hi{font-family:var(--serif);font-size:26px;line-height:1.1}
+.hero .hs{font-size:13px;opacity:.9;margin-top:6px}
+.hero .kp{display:flex;gap:18px;margin-top:12px}
+.hero .kp b{display:block;font-family:var(--serif);font-size:28px;line-height:1;color:var(--gold2)}
+.hero .kp span{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;opacity:.85}
+
+.mic-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 0}
+.mic{width:92px;height:92px;border-radius:50%;border:0;background:radial-gradient(circle at 30% 30%,#a5667a,var(--brand));color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 22px rgba(107,58,74,.35),inset 0 0 0 3px rgba(217,185,138,.55);transition:transform .15s}
+.mic:active{transform:scale(.96)}
+.mic.listening{background:var(--crit);animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(168,58,74,.45)}70%{box-shadow:0 0 0 18px rgba(168,58,74,0)}100%{box-shadow:0 0 0 0 rgba(168,58,74,0)}}
+.mic-hint{text-align:center;font-size:13px;color:var(--muted);min-height:20px}
+.interim{font-style:italic;color:var(--muted);text-align:center;min-height:18px;font-family:var(--serif);font-size:17px}
+
+.form .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.form .g3{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.75fr);gap:8px}
+.form input,.form select{min-width:0;max-width:100%}
+.form input[type=date],.form input[type=time]{padding-left:8px;padding-right:4px}
+.form label{font-size:11.5px;color:var(--muted);display:block;margin:6px 0 3px}
+.pv{border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;background:var(--bg)}
+.pv input,.pv select{background:var(--card)}
+.note{font-size:12.5px;border-radius:12px;padding:8px 10px;margin-top:8px;background:var(--soft)}
+.note.w{background:rgba(192,103,79,.13)}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;margin-top:22px}
+.chk input{width:20px;height:20px;accent-color:var(--brand)}
+
+.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:999px;color:#fff;font-weight:500;white-space:nowrap;letter-spacing:.2px}
+@media (prefers-color-scheme: dark){.tag{color:#1a1113}}
+.tag.ret{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.tag.ses{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.c-Facial{background:var(--c-facial)} .c-Corporal{background:var(--c-corporal)} .c-Olhar{background:var(--c-olhar)} .c-Avaliação{background:var(--c-aval)} .c-Capilar{background:var(--c-capilar)} .c-Outro{background:var(--c-outro)} .c-Google{background:var(--c-google)}
+.bl-Facial{border-left-color:var(--c-facial)!important} .bl-Corporal{border-left-color:var(--c-corporal)!important} .bl-Olhar{border-left-color:var(--c-olhar)!important} .bl-Avaliação{border-left-color:var(--c-aval)!important} .bl-Capilar{border-left-color:var(--c-capilar)!important} .bl-Outro{border-left-color:var(--c-outro)!important} .bl-Google{border-left-color:var(--c-google)!important}
+
+.ev{display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:14px;margin-bottom:8px}
+.ev .h{font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.1;min-width:52px;color:var(--brand)}
+.ev .h small{display:block;font-family:var(--sans);font-size:11px;color:var(--muted);font-weight:400}
+.ev .d{flex:1;min-width:0}
+.ev .d b{display:block;font-weight:600;font-size:15.5px;overflow-wrap:anywhere}
+.ev .p{font-size:14px}
+.ev .u{font-size:12px;color:var(--muted);margin-top:3px}
+.ev .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.ev .acts{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.ev.closed{opacity:.6}
+.ev.g{background:transparent;border-style:dashed}
+.st{font-size:11.5px;font-weight:600;letter-spacing:.3px}
+.st-Realizado{color:var(--ok)} .st-Cancelado,.st-Faltou{color:var(--crit)} .st-Agendado{color:var(--gold)}
+.grp{font-family:var(--serif);font-size:19px;font-weight:600;margin:16px 2px 8px;display:flex;align-items:baseline;gap:8px}
+.grp .n{font-family:var(--sans);font-size:12px;color:var(--muted);font-weight:500}
+
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+.nav b{font-family:var(--serif);font-size:21px;text-align:center}
+.seg{display:flex;background:var(--soft);border-radius:999px;padding:4px;margin-bottom:12px}
+.seg button{flex:1;border:0;background:transparent;padding:8px;border-radius:999px;cursor:pointer;font-weight:500;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--brand);box-shadow:var(--shadow)}
+.day .dh{font-size:12.5px;color:var(--muted);margin:12px 2px 6px;display:flex;justify-content:space-between;text-transform:none}
+.day .dh.today{color:var(--brand);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.grid .wd{font-size:11px;text-align:center;color:var(--muted);padding:4px 0;text-transform:uppercase;letter-spacing:1px}
+.cell{min-height:54px;border-radius:12px;background:var(--card);border:1px solid var(--line);padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.cell.out{opacity:.35}
+.cell.today{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.cell.sel{background:var(--soft)}
+.cell .n{font-size:13px;font-weight:500}
+.cell .dots{display:flex;flex-wrap:wrap;gap:2px;justify-content:center}
+.cell .dots i{width:7px;height:7px;border-radius:50%;display:block}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.kpi{background:var(--bg);border-radius:14px;padding:10px 12px}
+.kpi .l{font-size:11.5px;color:var(--muted);letter-spacing:.3px}
+.kpi .n{font-family:var(--serif);font-size:26px;font-weight:600;line-height:1.1}
+.year{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;cursor:pointer}
+.mcard.cur{border-color:var(--gold)}
+.mcard b{display:block;font-family:var(--serif);font-size:17px}
+.mcard .big{font-family:var(--serif);font-size:26px;font-weight:600;line-height:1}
+.mcard .bar{display:flex;height:5px;border-radius:999px;overflow:hidden;background:var(--line);margin-top:6px}
+.mcard .bar span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.cli{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer}
+.av{width:42px;height:42px;border-radius:50%;flex:0 0 42px;display:grid;place-items:center;background:var(--soft);color:var(--brand);font-family:var(--serif);font-size:19px;font-weight:600;border:1px solid var(--gold2)}
+.cli .d{flex:1;min-width:0}
+.cli .d b{display:block;font-weight:600}
+.empty{text-align:center;color:var(--muted);padding:22px 10px;font-family:var(--serif);font-size:17px;font-style:italic}
+
+nav.bottom{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:5}
+nav.bottom button{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;color:var(--muted);padding:6px 0;cursor:pointer;border-radius:10px;position:relative}
+nav.bottom button.on{color:var(--brand);font-weight:600}
+nav.bottom .badge{position:absolute;top:2px;left:calc(50% + 6px);background:var(--brand);color:#fff;border-radius:999px;font-size:10px;padding:0 5px;font-weight:600;display:none}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#2b1f22;color:#fff;padding:10px 16px;border-radius:14px;font-size:13.5px;max-width:92vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30}
+.toast.on{opacity:1}
+.sheet{position:fixed;inset:0;background:rgba(30,15,20,.5);z-index:20;display:none;align-items:flex-end;justify-content:center}
+.sheet.on{display:flex}
+.sheet .box{background:var(--card);width:100%;max-width:680px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px 16px calc(16px + env(safe-area-inset-bottom))}
+.sheet h2{margin:0 0 6px;font-size:24px}
+details summary{cursor:pointer;color:var(--muted);font-size:13px}
+.footer{text-align:center;font-family:var(--serif);font-style:italic;color:var(--muted);font-size:14px;margin:18px 0 0}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="mono"><span>LS</span><img src="logo.png" alt="" onerror="this.remove()"></div>
+  <div class="brandtxt">
+    <h1>La Santé</h1>
+    <div class="sub">Estetfisio · Dra. Edianne Rocha</div>
+  </div>
+  <button class="iconbtn" id="btnSync" aria-label="Atualizar">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+  </button>
+</header>
+
+<main>
+  <div class="statusline" id="status">Carregando…</div>
+
+  <!-- INÍCIO -->
+  <section class="tab on" id="tab-inicio">
+    <div class="hero" id="hero"></div>
+
+    <div class="card">
+      <div class="mic-wrap">
+        <button class="mic" id="btnMic" aria-label="Ditar atendimento">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/></svg>
+        </button>
+        <div class="mic-hint" id="micHint">Toque e fale: cliente, procedimento, data e horário</div>
+        <div class="interim" id="interim"></div>
+      </div>
+      <label class="f" for="entrada">Ou digite</label>
+      <textarea id="entrada" placeholder="Ex.: peeling de diamante da cliente Ana Paula dia 20 às 15h, retorno, último atendimento dia 5 de setembro limpeza de pele"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="btn primary grow" id="btnInterpretar">Interpretar</button>
+        <button class="btn" id="btnManual">Manual</button>
+      </div>
+    </div>
+
+    <div id="previewBox" style="display:none">
+      <div class="card">
+        <h2>Confira antes de agendar</h2>
+        <div id="preview"></div>
+        <div class="row">
+          <button class="btn primary grow" id="btnSalvar">Salvar na agenda</button>
+          <button class="btn ghost" id="btnDescartar">Descartar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Próximos atendimentos</h2>
+      <div id="alertas"></div>
+    </div>
+
+    <div class="card">
+      <details>
+        <summary>Exemplos de frases</summary>
+        <ul class="small muted" style="padding-left:18px;margin:8px 0 0">
+          <li>“Peeling de diamante da cliente Ana Paula dia 20 às 15h”</li>
+          <li>“Anamnese paciente Joana Lima amanhã às 9h30, telefone 85 99999 1234”</li>
+          <li>“Retorno do botox da cliente Carla sexta às 16h, último atendimento dia 2 de outubro”</li>
+          <li>“Drenagem linfática pós-operatória Mariana terceira sessão de 10 segunda às 10h”</li>
+          <li>“Criolipólise no abdômen cliente Beatriz dia 28 às 14h valor 600 reais”</li>
+          <li>“Limpeza de pele profunda cliente Fernanda dia 3/11 às 11h, primeira vez”</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- AGENDA -->
+  <section class="tab" id="tab-agenda">
+    <div class="seg" id="seg">
+      <button data-v="semana" class="on">Semana</button>
+      <button data-v="mes">Mês</button>
+      <button data-v="ano">Ano</button>
+    </div>
+    <div class="nav">
+      <button class="btn ghost" data-nav="-1" aria-label="Anterior">‹</button>
+      <b id="navLabel"></b>
+      <button class="btn ghost" data-nav="1" aria-label="Próximo">›</button>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div id="agenda"></div>
+  </section>
+
+  <!-- CLIENTES -->
+  <section class="tab" id="tab-clientes">
+    <input type="search" id="busca" placeholder="Buscar cliente ou procedimento">
+    <div style="height:10px"></div>
+    <div id="clientes"></div>
+  </section>
+
+  <!-- AJUSTES -->
+  <section class="tab" id="tab-ajustes">
+    <div class="card">
+      <h2>Conexão com o Google</h2>
+      <div id="connInfo" class="small muted"></div>
+      <div id="connFields">
+        <label class="f" for="apiUrl">URL do Apps Script (termina em /exec)</label>
+        <input type="url" id="apiUrl" placeholder="https://script.google.com/macros/s/…/exec">
+      </div>
+      <label class="f" for="token">Token de acesso (aba Config da planilha)</label>
+      <input type="password" id="token" placeholder="token">
+      <div class="row wrap" style="margin-top:12px">
+        <button class="btn primary grow" id="btnConectar">Salvar e testar</button>
+        <a class="btn" id="lnkPlanilha" target="_blank" rel="noopener" style="display:none">Abrir planilha</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Atendimentos e lembretes</h2>
+      <label class="f" for="cfgDur">Duração padrão do atendimento (minutos)</label>
+      <input type="number" id="cfgDur" inputmode="numeric">
+      <label class="f" for="cfgAnt">Lembrete no dia: quantos minutos antes</label>
+      <input type="number" id="cfgAnt" inputmode="numeric">
+      <label class="row small" style="margin-top:12px"><input type="checkbox" id="cfgMail"> Enviar e-mail com a agenda do dia às 7h</label>
+      <label class="f" for="cfgEmail">E-mail</label>
+      <input type="email" id="cfgEmail">
+      <div class="row wrap" style="margin-top:12px">
+        <button class="btn primary grow" id="btnCfg">Salvar</button>
+        <button class="btn" id="btnTestMail">E-mail de teste</button>
+      </div>
+      <p class="small muted">Os avisos no celular vêm do app Google Agenda: 2 dias antes, 1 dia antes e no próprio dia.</p>
+    </div>
+
+    <div class="card">
+      <h2>Exportar</h2>
+      <div class="row wrap">
+        <button class="btn" id="btnICS">Agenda (.ics)</button>
+        <button class="btn" id="btnCSV">Planilha (.csv)</button>
+        <button class="btn" id="btnPend">Enviar pendentes</button>
+      </div>
+      <p class="small muted" id="pendInfo"></p>
+    </div>
+    <p class="footer">Estetfisio La Santé</p>
+  </section>
+</main>
+
+<nav class="bottom">
+  <button class="on" data-tab="inicio"><span class="badge" id="badge"></span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3 4 6 4 9a4 4 0 0 1-8 0c0-3 1-6 4-9z"/><path d="M5 21h14"/></svg>Início</button>
+  <button data-tab="agenda"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agenda</button>
+  <button data-tab="clientes"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Clientes</button>
+  <button data-tab="ajustes"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Ajustes</button>
+</nav>
+
+<div class="sheet" id="sheet"><div class="box"><h2 id="sheetTitle">Atendimento</h2><div id="sheetBody"></div>
+  <div class="row" style="margin-top:14px" id="sheetActs"><button class="btn primary grow" id="btnSheetSave">Salvar</button><button class="btn ghost" id="btnSheetCancel">Fechar</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   LA SANTÉ — AGENDA DA CLÍNICA
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const fromIso = s => { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2], 12); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const today = () => iso(new Date());
+const br = s => s ? s.split('-').reverse().join('/') : '';
+const plain = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const plainAligned = s => Array.from(String(s)).map(c => c.normalize('NFD')[0]).join('').toLowerCase();
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const MES_P = MESES.map(plain);
+const longDate = s => cap(fromIso(s).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }));
+const shortDate = s => cap(fromIso(s).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }).replace('.', ''));
+const daysBetween = (a, b) => Math.round((fromIso(b) - fromIso(a)) / 86400000);
+const BRL = v => (+v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const catCls = c => (c || 'Outro').split(' ')[0];
+let toastT;
+function toast(msg, ms) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), ms || 2800); }
+
+const CATS = ['Facial', 'Corporal', 'Olhar e sobrancelhas', 'Avaliação', 'Capilar', 'Outro'];
+const STATUS = ['Agendado', 'Realizado', 'Cancelado', 'Faltou'];
+
+/* ---------- vocabulário de procedimentos ---------- */
+// [frase sem acento, rótulo, categoria, chave de subtipos]
+const PROCS = [
+  ['anamnese','Anamnese','Avaliação'], ['avaliacao facial','Avaliação facial','Avaliação'], ['avaliacao corporal','Avaliação corporal','Avaliação'],
+  ['avaliacao','Avaliação','Avaliação'], ['reavaliacao','Reavaliação','Avaliação'], ['consulta','Consulta','Avaliação'], ['bioimpedancia','Bioimpedância','Avaliação'],
+  ['limpeza de pele','Limpeza de pele','Facial','limpeza'], ['limpeza facial','Limpeza de pele','Facial','limpeza'],
+  ['peeling','Peeling','Facial','peeling'], ['microdermoabrasao','Microdermoabrasão (peeling de diamante)','Facial'],
+  ['microagulhamento','Microagulhamento','Facial','microag'], ['dermaplaning','Dermaplaning','Facial'],
+  ['hidratacao facial','Hidratação facial','Facial'], ['hidratacao labial','Hidratação labial','Facial'], ['hidratacao capilar','Hidratação capilar','Capilar'], ['hidratacao','Hidratação facial','Facial'],
+  ['revitalizacao facial','Revitalização facial','Facial'], ['rejuvenescimento facial','Rejuvenescimento facial','Facial'], ['rejuvenescimento','Rejuvenescimento facial','Facial'],
+  ['radiofrequencia','Radiofrequência','Facial','rf'], ['microcorrente','Microcorrente','Facial'], ['led terapia','LED terapia','Facial'], ['ledterapia','LED terapia','Facial'], ['led','LED terapia','Facial'],
+  ['alta frequencia','Alta frequência','Facial'], ['jato de plasma','Jato de plasma','Facial'], ['skinbooster','Skinbooster','Facial'], ['skin booster','Skinbooster','Facial'],
+  ['bioestimulador de colageno','Bioestimulador de colágeno','Facial'], ['bioestimulador','Bioestimulador de colágeno','Facial'],
+  ['preenchimento','Preenchimento','Facial','preench'], ['toxina botulinica','Toxina botulínica (botox)','Facial'], ['botox','Toxina botulínica (botox)','Facial'], ['botulinica','Toxina botulínica (botox)','Facial'],
+  ['fios de pdo','Fios de PDO','Facial'], ['fios de sustentacao','Fios de sustentação','Facial'], ['mascara de ouro','Máscara de ouro','Facial'],
+  ['tratamento de acne','Tratamento de acne','Facial'], ['acne','Tratamento de acne','Facial'], ['tratamento de manchas','Tratamento de manchas','Facial'], ['clareamento','Clareamento de manchas','Facial'],
+  ['despigmentacao','Despigmentação','Facial'], ['melasma','Tratamento de melasma','Facial'], ['ozonioterapia','Ozonioterapia','Facial'],
+  ['ultrassom microfocado','Ultrassom microfocado (HIFU)','Facial'], ['hifu','Ultrassom microfocado (HIFU)','Facial'], ['laser','Laser','Facial'],
+  ['design de sobrancelhas','Design de sobrancelhas','Olhar e sobrancelhas','design'], ['design de sobrancelha','Design de sobrancelhas','Olhar e sobrancelhas','design'],
+  ['sobrancelha','Design de sobrancelhas','Olhar e sobrancelhas','design'], ['henna','Henna nas sobrancelhas','Olhar e sobrancelhas'],
+  ['brow lamination','Brow lamination','Olhar e sobrancelhas'], ['laminacao de sobrancelhas','Brow lamination','Olhar e sobrancelhas'],
+  ['lash lifting','Lash lifting','Olhar e sobrancelhas'], ['extensao de cilios','Extensão de cílios','Olhar e sobrancelhas'], ['cilios','Extensão de cílios','Olhar e sobrancelhas'],
+  ['micropigmentacao','Micropigmentação','Olhar e sobrancelhas','micro'],
+  ['drenagem linfatica','Drenagem linfática','Corporal','dren'], ['drenagem','Drenagem linfática','Corporal','dren'],
+  ['massagem modeladora','Massagem modeladora','Corporal'], ['massagem relaxante','Massagem relaxante','Corporal'], ['massagem redutora','Massagem redutora','Corporal'],
+  ['pedras quentes','Massagem com pedras quentes','Corporal'], ['massagem','Massagem','Corporal'],
+  ['criolipolise','Criolipólise','Corporal'], ['lipocavitacao','Lipocavitação','Corporal'], ['ultracavitacao','Ultracavitação','Corporal'], ['cavitacao','Lipocavitação','Corporal'],
+  ['carboxiterapia','Carboxiterapia','Corporal'], ['intradermoterapia','Intradermoterapia','Corporal'], ['mesoterapia','Intradermoterapia','Corporal'],
+  ['lipo enzimatica','Lipo enzimática','Corporal'], ['enzimas','Aplicação de enzimas','Corporal'],
+  ['endermologia','Endermologia','Corporal'], ['vacuoterapia','Vacuoterapia','Corporal'], ['ventosaterapia','Ventosaterapia','Corporal'],
+  ['corrente russa','Corrente russa','Corporal'], ['eletroestimulacao','Eletroestimulação','Corporal'],
+  ['tratamento de celulite','Tratamento de celulite','Corporal'], ['celulite','Tratamento de celulite','Corporal'],
+  ['tratamento de estrias','Tratamento de estrias','Corporal'], ['estrias','Tratamento de estrias','Corporal'],
+  ['gordura localizada','Tratamento de gordura localizada','Corporal'], ['flacidez','Tratamento de flacidez','Corporal'],
+  ['esfoliacao corporal','Esfoliação corporal','Corporal'], ['esfoliacao','Esfoliação','Corporal'], ['manta termica','Manta térmica','Corporal'], ['bandagem','Bandagem','Corporal'],
+  ['detox','Protocolo detox','Corporal'], ['depilacao','Depilação','Corporal','depil'], ['pos operatorio','Pós-operatório','Corporal'], ['pos-operatorio','Pós-operatório','Corporal'],
+  ['terapia capilar','Terapia capilar','Capilar'], ['tricologia','Terapia capilar','Capilar'], ['queda de cabelo','Terapia capilar (queda)','Capilar'],
+  ['retorno','Retorno','Avaliação'], ['revisao','Revisão','Avaliação']
+].sort((a, b) => b[0].length - a[0].length);
+const SUBS = {
+  peeling: [['de hollywood','Peeling de carbono (Hollywood Peel)'],['hollywood','Peeling de carbono (Hollywood Peel)'],['glicolico','Peeling de ácido glicólico'],['mandelico','Peeling de ácido mandélico'],
+    ['salicilico','Peeling de ácido salicílico'],['retinoico','Peeling de ácido retinoico'],['latico','Peeling de ácido lático'],['lactico','Peeling de ácido lático'],['azelaico','Peeling de ácido azelaico'],
+    ['jessner','Peeling de Jessner'],['diamante','Peeling de diamante'],['cristal','Peeling de cristal'],['ouro','Peeling de ouro'],['enzimatico','Peeling enzimático'],
+    ['ultrassonico','Peeling ultrassônico'],['carbono','Peeling de carbono'],['vegetal','Peeling vegetal'],['verde','Peeling verde'],['quimico','Peeling químico'],['fisico','Peeling físico']],
+  limpeza: [['profunda','Limpeza de pele profunda']],
+  microag: [['capilar','Microagulhamento capilar','Capilar'],['estria','Microagulhamento para estrias','Corporal'],['corporal','Microagulhamento corporal','Corporal'],['facial','Microagulhamento facial']],
+  rf: [['facial','Radiofrequência facial'],['corporal','Radiofrequência corporal','Corporal'],['abdomen','Radiofrequência corporal','Corporal'],['flacidez','Radiofrequência corporal','Corporal']],
+  preench: [['labial','Preenchimento labial'],['labio','Preenchimento labial'],['olheira','Preenchimento de olheiras'],['malar','Preenchimento malar'],['mento','Preenchimento de mento'],['bigode chines','Preenchimento do bigode chinês']],
+  design: [['henna','Design de sobrancelhas com henna']],
+  micro: [['fio a fio','Micropigmentação fio a fio'],['shadow','Micropigmentação shadow'],['sobrancelha','Micropigmentação de sobrancelhas'],['labial','Micropigmentação labial','Facial'],['labio','Micropigmentação labial','Facial'],['olho','Micropigmentação de olhos']],
+  dren: [['pos operatori','Drenagem linfática pós-operatória'],['pos-operatori','Drenagem linfática pós-operatória'],['gestante','Drenagem linfática para gestante'],['facial','Drenagem linfática facial','Facial']],
+  depil: [['laser','Depilação a laser'],['cera','Depilação com cera'],['linha','Depilação com linha','Facial']]
+};
+const AREAS = [['abdomen','abdômen'],['abdome','abdômen'],['barriga','abdômen'],['flancos','flancos'],['culote','culote'],['gluteo','glúteos'],['bumbum','glúteos'],['coxa','coxas'],
+  ['perna','pernas'],['braco','braços'],['papada','papada'],['costas','costas'],['colo','colo'],['pescoco','pescoço'],['axila','axilas'],['virilha','virilha'],['buco','buço'],['olheira','olheiras']];
+const PROC_FIRST = new Set(PROCS.map(p => p[0].split(' ')[0]));
+
+/* ---------- números por extenso ---------- */
+const NUMW = { zero:0, um:1, uma:1, dois:2, duas:2, tres:3, quatro:4, cinco:5, seis:6, sete:7, oito:8, nove:9, dez:10, onze:11, doze:12, treze:13, quatorze:14, catorze:14, quinze:15, dezesseis:16, dezessete:17, dezoito:18, dezenove:19, vinte:20, trinta:30, quarenta:40, cinquenta:50, sessenta:60, setenta:70, oitenta:80, noventa:90, cem:100, cento:100, duzentos:200, trezentos:300, quatrocentos:400, quinhentos:500, seiscentos:600, setecentos:700, oitocentos:800, novecentos:900, primeiro:1 };
+const wkey = w => plain(w || '').replace(/[^a-z0-9]/g, '');
+const wpunct = w => ((w || '').match(/[.,;:!?]+$/) || [''])[0];
+function canJoin(last, v) {
+  if (last === 1000) return v < 1000;
+  if (last >= 100 && last < 1000) return v < 100;
+  if (last >= 20 && last < 100 && last % 10 === 0) return v < 10;
+  return false;
+}
+function wordsToDigits(text) {
+  const w = text.trim().split(/\s+/); const out = [];
+  let i = 0;
+  while (i < w.length) {
+    const k0 = wkey(w[i]);
+    if (!(k0 in NUMW) && k0 !== 'mil') { out.push(w[i]); i++; continue; }
+    if (k0 === 'primeiro' && wkey(w[i - 1]) !== 'dia') { out.push(w[i]); i++; continue; }
+    let total = 0, group = 0, last = 0, j = i, used = 0, endP = '';
+    while (j < w.length) {
+      const k = wkey(w[j]);
+      if (k === 'mil') { total += (group || 1) * 1000; group = 0; last = 1000; }
+      else if (k in NUMW && !(k === 'primeiro' && j > i)) {
+        const v = NUMW[k];
+        if (group === 0 && (last === 0 || last === 1000)) group = v;
+        else if (canJoin(last, v)) group += v;
+        else break;
+        last = v;
+      } else break;
+      used = j - i + 1; endP = wpunct(w[j]); j++;
+      if (endP) break;
+      if (j < w.length - 1 && wkey(w[j]) === 'e') {
+        const nk = wkey(w[j + 1]);
+        if (nk === 'mil' || ((nk in NUMW) && canJoin(last, NUMW[nk]))) { j++; continue; }
+        break;
+      }
+    }
+    const nxt = wkey(w[i + 1]);
+    const article = used === 1 && (k0 === 'um' || k0 === 'uma') && !/^(mil|hora|horas|h|dia|dias|e|da|reais|real|semana|semanas|mes|meses|sessao|sessoes)$/.test(nxt) && wkey(w[i - 1]) !== 'as';
+    if (used === 0 || article) { out.push(w[i]); i++; continue; }
+    out.push(String(total + group) + endP); i += used;
+  }
+  return out.join(' ');
+}
+
+/* ---------- motor de interpretação ---------- */
+function ctxOf(raw) {
+  const T = ' ' + wordsToDigits(String(raw).replace(/\s+/g, ' ')) + ' ';
+  const P = plainAligned(T);
+  const used = new Array(T.length).fill(false);
+  const ctx = { T, P, used };
+  ctx.mark = (i, len) => { for (let k = i; k < i + len && k < used.length; k++) used[k] = true; };
+  ctx.sub = re => { re.lastIndex = 0; let x; while ((x = re.exec(P))) { if (!used[x.index + (x[0].length > 1 ? 1 : 0)]) return x; if (!re.global) break; } return null; };
+  return ctx;
+}
+const MES_RE = MES_P.join('|');
+function ajustaData(y, mo, d, temAno, pref) {
+  let c = new Date(y, mo, d, 12);
+  if (c.getDate() !== d) return '';
+  const h = today();
+  if (!temAno && pref === 'futuro' && iso(c) < h) c = new Date(y + 1, mo, d, 12);
+  if (!temAno && pref === 'passado' && iso(c) > h) c = new Date(y - 1, mo, d, 12);
+  return iso(c);
+}
+function findDate(ctx, pref) {
+  const now = new Date(); let m; const { sub, mark } = ctx;
+  if ((m = sub(new RegExp('(?:^|\\s)(?:(?:no|para o|em|dia)\\s+)?(?:dia\\s+)?(\\d{1,2})\\s*/\\s*(\\d{1,2})(?:\\s*/\\s*(\\d{2,4}))?(?=[\\s,.;]|$)', 'g')))) {
+    let y = m[3] ? +m[3] : now.getFullYear(); if (y < 100) y += 2000; mark(m.index, m[0].length); return ajustaData(y, +m[2] - 1, +m[1], !!m[3], pref);
+  }
+  if ((m = sub(new RegExp('(?:^|\\s)(?:(?:no|para o|em)\\s+)?(?:dia\\s+)?(\\d{1,2})\\s+de\\s+(' + MES_RE + ')(?:\\s+de\\s+(\\d{4}))?(?=[\\s,.;]|$)', 'g')))) {
+    mark(m.index, m[0].length); return ajustaData(m[3] ? +m[3] : now.getFullYear(), MES_P.indexOf(m[2]), +m[1], !!m[3], pref);
+  }
+  if ((m = sub(/(?:^|\s)(?:(?:no|para o|em)\s+)?dia\s+(\d{1,2})(?=[\s,.;]|$)/g))) {
+    const d = +m[1]; let mo = now.getMonth(), y = now.getFullYear();
+    if (pref === 'futuro' && d < now.getDate()) { mo++; if (mo > 11) { mo = 0; y++; } }
+    if (pref === 'passado' && d > now.getDate()) { mo--; if (mo < 0) { mo = 11; y--; } }
+    mark(m.index, m[0].length); return ajustaData(y, mo, d, true, pref);
+  }
+  if ((m = sub(/(?:^|\s)(?:ha|faz)\s+(\d{1,3})\s+(dias?|semanas?|mes|meses)(?:\s+atras)?(?=[\s,.;]|$)/g))) {
+    const n = +m[1] * (/sem/.test(m[2]) ? 7 : /mes/.test(m[2]) ? 30 : 1); mark(m.index, m[0].length); return iso(addDays(now, -n));
+  }
+  if ((m = sub(/(?:^|\s)(?:na\s+|no\s+)?(semana|mes)\s+passad[oa](?=[\s,.;]|$)/g))) { mark(m.index, m[0].length); return iso(addDays(now, m[1] === 'semana' ? -7 : -30)); }
+  if ((m = sub(/(?:^|\s)depois de amanha(?=[\s,.;]|$)/g))) { mark(m.index, m[0].length); return iso(addDays(now, 2)); }
+  if ((m = sub(/(?:^|\s)anteontem(?=[\s,.;]|$)/g))) { mark(m.index, m[0].length); return iso(addDays(now, -2)); }
+  if ((m = sub(/(?:^|\s)amanha(?=[\s,.;]|$)/g))) { mark(m.index, m[0].length); return iso(addDays(now, 1)); }
+  if ((m = sub(/(?:^|\s)ontem(?=[\s,.;]|$)/g))) { mark(m.index, m[0].length); return iso(addDays(now, -1)); }
+  if ((m = sub(/(?:^|\s)hoje(?=[\s,.;]|$)/g))) { mark(m.index, m[0].length); return today(); }
+  if ((m = sub(/(?:^|\s)(?:(?:na|no|para)\s+)?(?:(?:proxima|proximo|ultima|ultimo)\s+)?(segunda|terca|quarta|quinta|sexta|sabado|domingo)(?:[- ]feira)?(?:\s+(?:que vem|passad[ao]))?(?=[\s,.;]|$)/g))) {
+    const alvo = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'].indexOf(m[1]);
+    const passo = pref === 'passado' ? -1 : 1;
+    let d = addDays(now, passo); while (d.getDay() !== alvo) d = addDays(d, passo);
+    mark(m.index, m[0].length); return iso(d);
+  }
+  return '';
+}
+function findProc(ctx) {
+  const { P, sub, mark } = ctx;
+  for (const [ph, label, cat, sk] of PROCS) {
+    const x = sub(new RegExp('(?:^|\\s)' + ph.replace(/[- ]/g, '[\\s-]+') + '(?=[\\s,.;]|$)', 'g'));
+    if (!x) continue;
+    mark(x.index, x[0].length);
+    let end = x.index + x[0].length, lab = label, c = cat;
+    if (sk && SUBS[sk]) {
+      const tail = P.slice(end, end + 45);
+      for (const [k, l, c2] of SUBS[sk]) {
+        const r = new RegExp('^(.{0,30}?)(?:^|\\s)' + k.replace(/ /g, '\\s+'));
+        const y = r.exec(tail);
+        if (y && !/\b(cliente|paciente|dia|as)\b/.test(y[1])) { lab = l; if (c2) c = c2; mark(end, y[0].length); end += y[0].length; break; }
+      }
+    }
+    return { label: lab, cat: c, end };
+  }
+  return null;
+}
+function findArea(ctx, label) {
+  for (const [k, nome] of AREAS) {
+    const x = ctx.sub(new RegExp('(?:^|\\s)(?:(?:no|na|nos|nas|de|do|da|dos|das|em)\\s+)?' + k + '\\w*(?=[\\s,.;]|$)', 'g'));
+    if (x) { ctx.mark(x.index, x[0].length); return plain(label).includes(plain(nome)) ? '' : nome; }
+  }
+  return '';
+}
+const STOPC = new Set(['dia','as','a','o','os','no','na','em','para','pra','pro','hoje','amanha','depois','proxima','proximo','segunda','terca','quarta','quinta','sexta','sabado','domingo','horas','hora','h','e','um','uma','das','dos','com','de','da','do','cliente','paciente','retorno','revisao','sessao','telefone','whatsapp','celular','valor','ultimo','ultima','atendimento','primeira','vez','nova','novo','minutos','duracao','por','reais','que','vem','dra','doutora','marcar','agendar','agenda','agende','marque','procedimento'].concat(MES_P));
+const CONNECT = new Set(['da','de','do','dos','das','e','d']);
+const titulo = s => s.split(' ').map((w, i) => CONNECT.has(plain(w)) && i > 0 ? w.toLowerCase() : (w === w.toUpperCase() && w.length > 1 && w.length <= 3 ? w : cap(w.toLowerCase()))).join(' ');
+function nomeDepois(ctx, start) {
+  const { T, used, mark } = ctx; const words = []; const re = /\S+/g; re.lastIndex = start; let w;
+  while ((w = re.exec(T)) && words.length < 6) {
+    if (used[w.index]) break;
+    const raw = w[0].replace(/[.,;:!?]+$/, ''); const k = plain(raw).replace(/[^a-z]/g, '');
+    if (!k || /\d/.test(raw) || (STOPC.has(k) && !CONNECT.has(k)) || PROC_FIRST.has(k)) break;
+    words.push(raw); mark(w.index, w[0].length);
+    if (/[.,;:!?]$/.test(w[0])) break;
+  }
+  while (words.length && CONNECT.has(plain(words[words.length - 1]))) words.pop();
+  return words.join(' ');
+}
+
+function parseAtendimento(raw, origem) {
+  // separa o trecho "último atendimento ..." (datas no passado)
+  let ultimoTxt = '';
+  const rp = plainAligned(raw);
+  const ui = rp.search(/ultim[oa]\s+(?:atendimento|sessao|visita|procedimento|consulta)/);
+  let main = raw;
+  if (ui >= 0) {
+    const rest = raw.slice(ui); const cut = rest.search(/[.;]/);
+    ultimoTxt = cut >= 0 ? rest.slice(0, cut) : rest;
+    main = raw.slice(0, ui) + ' ' + (cut >= 0 ? rest.slice(cut + 1) : '');
+  }
+  const ctx = ctxOf(main); const { T, P, sub, mark } = ctx; let m;
+  const it = { id: uid(), date: '', hora: '', duracao: +S.config.duracao || 60, cliente: '', telefone: '', procedimento: '', categoria: 'Outro', retorno: false,
+    sessao: '', ultimo: '', valor: '', obs: '', status: 'Agendado', origem: origem || 'texto', notas: [] };
+
+  // telefone
+  if ((m = sub(/(?:^|\s)(?:telefone|whatsapp|whats|zap|celular|fone|contato|numero)\s*(?:e|:|eh)?\s*((?:\+?55\s*)?\(?\d{2}\)?[\s.-]*9?\s*\d{4}[\s.-]*\d{4})/g))) {
+    it.telefone = m[1].replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, ''); mark(m.index, m[0].length);
+  }
+  // sessão: "3ª sessão de 10", "terceira sessão", "sessão 2 de 8"
+  const ORD = { primeira: 1, segunda: 2, terceira: 3, quarta: 4, quinta: 5, sexta: 6, setima: 7, oitava: 8, nona: 9, decima: 10 };
+  if ((m = sub(/(?:^|\s)(?:(primeira|segunda|terceira|quarta|quinta|sexta|setima|oitava|nona|decima)|(\d{1,2})\s*[ªao]?)\s+sessao(?:\s+de\s+(\d{1,2}))?(?=[\s,.;]|$)/g))
+    || (m = sub(/(?:^|\s)sessao\s+(?:numero\s+)?()(\d{1,2})(?:\s+de\s+(\d{1,2}))?(?=[\s,.;]|$)/g))) {
+    const n = m[1] ? ORD[m[1]] : +m[2]; it.sessao = n + (m[3] ? '/' + m[3] : ''); mark(m.index, m[0].length);
+  }
+  // valor
+  if ((m = sub(/(?:^|\s)(?:valor(?:\s+de)?|preco(?:\s+de)?|custa|cobrar|r\$)\s*(\d+(?:[.,]\d{1,2})?)(?:\s*reais)?(?=[\s,.;]|$)/g)) || (m = sub(/(?:^|\s)(\d+(?:[.,]\d{1,2})?)\s*reais(?=[\s,.;]|$)/g))) {
+    it.valor = parseFloat(m[1].replace(',', '.')); mark(m.index, m[0].length);
+  }
+  // duração
+  if ((m = sub(/(?:^|\s)(?:(?:com\s+)?duracao\s+de|por|durante)\s+(\d{1,3})\s*(?:min|minutos)(?=[\s,.;]|$)/g)) || (m = sub(/(?:^|\s)(\d{2,3})\s*minutos(?=[\s,.;]|$)/g))) {
+    it.duracao = +m[1]; mark(m.index, m[0].length);
+  } else if ((m = sub(/(?:^|\s)(?:(?:com\s+)?duracao\s+de|por|durante)\s+(\d)\s*(?:h|horas?)(?:\s+e\s+(meia|\d{1,2}))?(?=[\s,.;]|$)/g))) {
+    it.duracao = +m[1] * 60 + (m[2] === 'meia' ? 30 : +(m[2] || 0)); mark(m.index, m[0].length);
+  }
+  // horário
+  let hh = null, mm = 0;
+  if ((m = sub(/(?:^|\s)(?:as|a partir das|para as|por volta das)\s+(\d{1,2})(?:\s*(?::|h)\s*(\d{2})|\s*h(?:oras?|rs)?(?:\s+e\s+(\d{1,2}|meia)(?:\s+minutos?)?)?|\s+e\s+(\d{1,2}|meia))?(?:\s+(?:horas?\s+)?(da manha|da tarde|da noite))?(?=[\s,.;]|$)/g))) {
+    hh = +m[1]; const mi = m[2] || m[3] || m[4]; mm = mi === 'meia' ? 30 : +(mi || 0);
+    if (m[5] && m[5] !== 'da manha' && hh < 12) hh += 12; else if (!m[5] && hh >= 1 && hh <= 6) hh += 12;
+    mark(m.index, m[0].length);
+  } else if ((m = sub(/(?:^|\s)(\d{1,2})(?::|h)(\d{2})?(?=[\s,.;]|$)/g))) { hh = +m[1]; mm = +(m[2] || 0); mark(m.index, m[0].length); }
+  else if ((m = sub(/(?:^|\s)(?:ao\s+|as\s+)?meio[ -]dia(?:\s+e\s+meia)?/g))) { hh = 12; mm = /meia$/.test(m[0]) ? 30 : 0; mark(m.index, m[0].length); }
+  if (hh != null && hh < 24 && mm < 60) it.hora = pad(hh) + ':' + pad(mm);
+
+  // retorno?
+  if ((m = sub(/(?:^|\s)(?:nao\s+e\s+retorno|primeira\s+vez|primeiro\s+atendimento|cliente\s+nova|nova\s+cliente|paciente\s+nova)(?=[\s,.;]|$)/g))) { it.retorno = false; it._retExplicito = true; mark(m.index, m[0].length); }
+  else if ((m = sub(/(?:^|\s)(?:e\s+)?(?:um\s+|uma\s+|de\s+|do\s+|da\s+)?(retorno|revisao|reavaliacao)(?=[\s,.;]|$)/g))) {
+    it.retorno = true; it._retExplicito = true;
+    // "retorno do botox": o procedimento vem a seguir; não consumir como procedimento
+    mark(m.index, m[0].length);
+  }
+
+  // data do atendimento
+  it.date = findDate(ctx, 'futuro');
+
+  // procedimento
+  const pr = findProc(ctx);
+  if (pr) {
+    it.procedimento = pr.label; it.categoria = pr.cat;
+    const area = findArea(ctx, pr.label); if (area) it.procedimento += ' — ' + area;
+  } else if (it.retorno) { it.procedimento = 'Retorno'; it.categoria = 'Avaliação'; }
+
+  // cliente
+  if ((m = sub(/(?:^|\s)(?:d[oa]\s+|para\s+[oa]\s+|com\s+[oa]\s+|[oa]\s+)?(?:client[ea]|paciente)\s+/g))) {
+    mark(m.index, m[0].length); it.cliente = titulo(nomeDepois(ctx, m.index + m[0].length));
+  }
+  if (!it.cliente) {
+    const re = /\S+/g; let w, run = [], best = [];
+    const flush = () => { while (run.length && CONNECT.has(plain(run[run.length - 1].t))) run.pop(); if (run.length > best.length) best = run.slice(); run = []; };
+    while ((w = re.exec(T))) {
+      const t = w[0].replace(/[.,;:!?]+$/, ''); const k = plain(t).replace(/[^a-z]/g, '');
+      const isCap = /^[A-ZÀ-Ý]/.test(t) && w.index > 1 && !ctx.used[w.index] && !STOPC.has(k) && !PROC_FIRST.has(k);
+      if (isCap) run.push({ t, i: w.index, l: w[0].length });
+      else if (run.length && CONNECT.has(k) && !ctx.used[w.index]) run.push({ t, i: w.index, l: w[0].length });
+      else flush();
+      if (/[.,;:!?]$/.test(w[0])) flush();
+    }
+    flush();
+    if (best.length) { it.cliente = best.map(x => x.t).join(' '); best.forEach(x => mark(x.i, x.l)); }
+  }
+  if (!it.cliente && pr && (m = /^\s+(?:d[oa]s?|de|para\s+[oa]?|pra)\s+/.exec(P.slice(pr.end)))) {
+    const nome = nomeDepois(ctx, pr.end + m[0].length);
+    if (nome && nome.split(' ').length <= 5) { it.cliente = titulo(nome); mark(pr.end, m[0].length); }
+  }
+  if (it.cliente && /^(Dra?|Doutora)\b/.test(it.cliente)) it.cliente = '';
+
+  // último atendimento: informado na fala ou buscado no histórico
+  if (ultimoTxt) {
+    const c2 = ctxOf(ultimoTxt.replace(/^\s*ultim[oa]\s+\S+\s*(?:foi|em|no|na|:)?/i, ' '));
+    const d2 = findDate(c2, 'passado'); const p2 = findProc(c2);
+    it.ultimo = [d2 ? br(d2) : '', p2 ? p2.label : ''].filter(Boolean).join(' — ');
+    if (it.ultimo) it.notas.push('Último atendimento informado na fala: ' + it.ultimo + (d2 ? ' (há ' + daysBetween(d2, today()) + ' dias)' : '') + '.');
+  }
+  completarDoHistorico(it);
+
+  if (!it.date) it.notas.push('Data não identificada: informe a data do atendimento.');
+  if (!it.hora) it.notas.push('Horário não identificado.');
+  if (!it.cliente) it.notas.push('Cliente não identificada: preencha o nome.');
+  if (!it.procedimento) { it.procedimento = 'Atendimento'; it.notas.push('Procedimento não identificado: escolha ou digite.'); }
+  if (it.date && it.date < today()) it.notas.push('A data informada já passou.');
+  it.obs = 'Ditado: “' + String(raw).trim() + '”';
+  return it;
+}
+function parseTexto(text, origem) {
+  return String(text).split(/\s*(?:;|\n|\s+e também\s+|\s+depois\s+outro\s+)\s*/i).map(s => s.trim()).filter(Boolean).map(s => parseAtendimento(s, origem));
+}
+
+/* ---------- clientes e histórico ---------- */
+const keyCli = n => plain(n).replace(/[^a-z ]/g, '').replace(/\s+/g, ' ').trim();
+function historico(nome, excetoId) {
+  const k = keyCli(nome); if (!k) return [];
+  return allItems().filter(i => i.id !== excetoId && keyCli(i.cliente) === k).sort((a, b) => sortIt(b, a));
+}
+function ultimoRegistrado(nome, antesDe, excetoId) {
+  const h = historico(nome, excetoId).filter(i => i.status !== 'Cancelado' && i.status !== 'Faltou' && i.date <= (antesDe || today()) && (i.status === 'Realizado' || i.date < today()));
+  return h[0] || null;
+}
+function completarDoHistorico(it) {
+  if (!it.cliente) return;
+  const h = historico(it.cliente, it.id);
+  if (!it.telefone) { const t = h.find(i => i.telefone); if (t) it.telefone = t.telefone; }
+  const u = ultimoRegistrado(it.cliente, it.date || today(), it.id);
+  if (u && !it.ultimo) {
+    it.ultimo = br(u.date) + ' — ' + u.procedimento;
+    it.notas.push('Último atendimento registrado: ' + it.ultimo + ' (há ' + daysBetween(u.date, today()) + ' dias).');
+  }
+  if (!h.length) it.notas.push('Primeiro registro desta cliente no app.');
+  if (!it._retExplicito && u && it.procedimento && plain(u.procedimento).split(' — ')[0] === plain(it.procedimento).split(' — ')[0]) {
+    it.notas.push('A cliente já fez este procedimento; marque “Retorno” se for o caso.');
+  }
+}
+
+/* ---------- estado ---------- */
+const DEF_CFG = { duracao: 60, antecedencia: 120, emailDiario: true, email: '', clinica: 'Estetfisio La Santé · Dra. Edianne Rocha' };
+const S = {
+  settings: store.get('ls_settings', { apiUrl: '', token: '' }),
+  config: Object.assign({}, DEF_CFG, store.get('ls_config', {})),
+  items: store.get('ls_items', []), google: store.get('ls_google', []), pending: store.get('ls_pending', []),
+  sheetUrl: store.get('ls_sheet', ''), view: 'semana', ref: today(), sel: today(), busca: '', draft: [], online: null, editing: null
+};
+const saveCache = () => { store.set('ls_items', S.items); store.set('ls_pending', S.pending); store.set('ls_google', S.google); };
+const allItems = () => S.items.concat(S.pending.map(p => Object.assign({ _pend: true }, p)));
+const sortIt = (a, b) => (a.date + (a.hora || '99')).localeCompare(b.date + (b.hora || '99'));
+
+/* ---------- backend ---------- */
+function mode() { if (window.google && google.script && google.script.run) return 'gas'; if (S.settings.apiUrl) return 'remote'; return 'local'; }
+class ApiError extends Error {}
+async function call(action, payload) {
+  const req = Object.assign({}, payload || {}, { action, token: S.settings.token });
+  const m = mode();
+  if (m === 'gas') return new Promise((res, rej) => google.script.run
+    .withSuccessHandler(r => (r && r.ok ? res(r) : rej(new ApiError((r && r.error) || 'Erro no servidor'))))
+    .withFailureHandler(e => rej(new Error((e && e.message) || e))).api(req));
+  if (m === 'remote') {
+    const r = await fetch(S.settings.apiUrl, { method: 'POST', body: JSON.stringify(req) });
+    const j = await r.json(); if (!j.ok) throw new ApiError(j.error || 'Erro no servidor'); return j;
+  }
+  return localApi(req);
+}
+function localApi(req) {
+  const db = store.get('ls_local', { items: [], config: DEF_CFG }); const out = { ok: true };
+  if (req.action === 'list') { out.items = db.items; out.config = db.config; out.google = []; }
+  else if (req.action === 'add') { db.items.push(...req.items); out.items = req.items; }
+  else if (req.action === 'update') { db.items = db.items.map(i => i.id === req.item.id ? Object.assign({}, i, req.item) : i); out.item = db.items.find(i => i.id === req.item.id); }
+  else if (req.action === 'delete') db.items = db.items.filter(i => i.id !== req.id);
+  else if (req.action === 'setConfig') { db.config = Object.assign({}, db.config, req.config); out.config = db.config; }
+  else if (req.action === 'testEmail') return Promise.reject(new ApiError('Sem planilha conectada: o e-mail diário depende do Apps Script.'));
+  store.set('ls_local', db); return Promise.resolve(out);
+}
+function rangeForView() {
+  const r = fromIso(S.ref);
+  if (S.view === 'ano') return [r.getFullYear() + '-01-01', r.getFullYear() + '-12-31'];
+  return [iso(new Date(r.getFullYear(), r.getMonth() - 1, 1, 12)), iso(new Date(r.getFullYear(), r.getMonth() + 2, 0, 12))];
+}
+async function load() {
+  const [from, to] = rangeForView();
+  try {
+    if (mode() !== 'local' && !S.settings.token) throw new ApiError('Informe o token em Ajustes.');
+    const r = await call('list', { from, to });
+    S.items = r.items || []; S.google = r.google || [];
+    if (r.config) { S.config = Object.assign({}, DEF_CFG, r.config); store.set('ls_config', S.config); }
+    if (r.sheetUrl) { S.sheetUrl = r.sheetUrl; store.set('ls_sheet', r.sheetUrl); }
+    S.online = true; saveCache();
+    if (S.pending.length) syncPending(true);
+  } catch (e) { S.online = false; if (e instanceof ApiError) toast(e.message, 4000); }
+  renderAll();
+}
+async function syncPending(silent) {
+  if (!S.pending.length || mode() === 'local') return;
+  const batch = S.pending.slice();
+  try {
+    const r = await call('add', { items: batch }); const ids = new Set(batch.map(b => b.id));
+    S.pending = S.pending.filter(p => !ids.has(p.id)); S.items.push(...r.items); S.online = true; saveCache(); renderAll();
+    if (!silent) toast(batch.length + ' atendimento(s) enviados');
+  } catch (e) { S.online = false; setStatus(); if (!silent) toast('Ainda sem conexão: ' + e.message, 3500); }
+}
+function setStatus() {
+  const m = mode(), n = S.pending.length;
+  let t = m === 'local' ? 'Modo local · conecte o Google em Ajustes' : S.online === false ? 'Sem conexão com o Google' : 'Sincronizado com Google Agenda e Drive';
+  if (n) t += ' · ' + n + ' pendente' + (n > 1 ? 's' : '');
+  $('#status').textContent = t;
+  $('#pendInfo').textContent = n ? n + ' atendimento(s) aguardando envio.' : 'Nenhum envio pendente.';
+}
+
+/* ---------- formulário ---------- */
+function formHtml(it, i) {
+  const conf = conflitosDe(it);
+  const nomes = [...new Set(allItems().map(x => x.cliente).filter(Boolean))].sort();
+  return `<div class="form" data-i="${i}">
+    <div class="g2"><div><label>Cliente</label><input type="text" data-k="cliente" list="dlClientes" value="${esc(it.cliente)}" placeholder="Nome da cliente"></div>
+      <div><label>Telefone / WhatsApp</label><input type="tel" data-k="telefone" value="${esc(it.telefone)}" placeholder="85 9 9999-9999"></div></div>
+    <datalist id="dlClientes">${nomes.map(n => `<option value="${esc(n)}">`).join('')}</datalist>
+    <label>Procedimento</label><input type="text" data-k="procedimento" list="dlProcs" value="${esc(it.procedimento)}">
+    <datalist id="dlProcs">${[...new Set(PROCS.map(p => p[1]).concat(Object.values(SUBS).flat().map(s => s[1])))].sort().map(n => `<option value="${esc(n)}">`).join('')}</datalist>
+    <div class="g2"><div><label>Categoria</label><select data-k="categoria">${CATS.map(c => `<option ${c === it.categoria ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+      <div><label class="chk"><input type="checkbox" data-k="retorno" ${it.retorno ? 'checked' : ''}> Retorno</label></div></div>
+    <div class="g3"><div><label>Data</label><input type="date" data-k="date" value="${esc(it.date)}"></div>
+      <div><label>Horário</label><input type="time" data-k="hora" value="${esc(it.hora)}"></div>
+      <div><label>Duração (min)</label><input type="number" data-k="duracao" value="${esc(it.duracao)}"></div></div>
+    <div class="quick"><span class="small muted" style="align-self:center">Daqui a:</span>${[7, 15, 21, 30].map(n => `<button class="btn sm" data-plus="${n}">${n} dias</button>`).join('')}</div>
+    <div class="g3"><div><label>Sessão</label><input type="text" data-k="sessao" value="${esc(it.sessao)}" placeholder="ex.: 3/10"></div>
+      <div><label>Valor (R$)</label><input type="number" step="0.01" data-k="valor" value="${esc(it.valor)}"></div>
+      <div><label>Status</label><select data-k="status">${STATUS.map(s => `<option ${s === it.status ? 'selected' : ''}>${s}</option>`).join('')}</select></div></div>
+    <label>Último atendimento</label><input type="text" data-k="ultimo" value="${esc(it.ultimo)}" placeholder="dd/mm/aaaa — procedimento">
+    <label>Observações</label><input type="text" data-k="obs" value="${esc(it.obs)}">
+    ${(it.notas || []).map(n => `<div class="note ${/^(Data não|Cliente não|Procedimento não|A data|Horário não)/.test(n) ? 'w' : ''}">${esc(n)}</div>`).join('')}
+    ${conf.length ? `<div class="note w">Conflito de horário: ${conf.map(c => esc((c.hora ? c.hora + ' ' : '') + (c.title || (c.procedimento + (c.cliente ? ' — ' + c.cliente : ''))))).join('; ')}</div>` : ''}
+  </div>`;
+}
+const toMin = h => { const p = String(h).split(':').map(Number); return p[0] * 60 + (p[1] || 0); };
+function conflitosDe(it) {
+  if (!it.date || !it.hora) return [];
+  const a = toMin(it.hora), b = a + (+it.duracao || 60);
+  const own = allItems().filter(x => x.id !== it.id && x.date === it.date && x.hora && x.status === 'Agendado' && toMin(x.hora) < b && toMin(x.hora) + (+x.duracao || 60) > a);
+  const g = S.google.filter(x => x.date === it.date && x.hora && toMin(x.hora) < b && (x.fim ? toMin(x.fim) : toMin(x.hora) + 60) > a);
+  return own.concat(g);
+}
+function bindForm(container, getItem, rerender) {
+  container.addEventListener('input', e => {
+    const f = e.target.closest('.form'); const k = e.target.dataset.k; if (!f || !k) return;
+    const it = getItem(+f.dataset.i);
+    it[k] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+  });
+  container.addEventListener('change', e => {
+    const f = e.target.closest('.form'); const k = e.target.dataset.k; if (!f || !k) return;
+    const it = getItem(+f.dataset.i);
+    if (k === 'retorno') it._retExplicito = true;
+    if (k === 'cliente') { it.notas = (it.notas || []).filter(n => !/^(Último atendimento registrado|Primeiro registro|A cliente já|Cliente não)/.test(n)); if (!/informado/.test((it.notas || []).join())) it.ultimo = ''; completarDoHistorico(it); rerender(); }
+    if (['date', 'hora', 'duracao'].includes(k)) { it.notas = (it.notas || []).filter(n => !/já passou|não identificad[ao]: informe a data|Horário não/.test(n)); if (it.date && it.date < today() && it.status === 'Agendado') it.notas.push('A data informada já passou.'); rerender(); }
+  });
+  container.addEventListener('click', e => {
+    const b = e.target.closest('[data-plus]'); if (!b) return; e.preventDefault();
+    const f = b.closest('.form'); const it = getItem(+f.dataset.i);
+    it.date = iso(addDays(new Date(), +b.dataset.plus)); it.notas = (it.notas || []).filter(n => !/Data não|já passou/.test(n)); rerender();
+  });
+}
+
+/* ---------- registrar ---------- */
+function renderPreview() {
+  $('#previewBox').style.display = S.draft.length ? 'block' : 'none';
+  $('#preview').innerHTML = S.draft.map((it, i) => `<div class="pv"><div class="row"><span class="tag c-${catCls(it.categoria)}">${esc(it.categoria)}</span>${it.retorno ? '<span class="tag ret">retorno</span>' : ''}<span class="small muted">${it.origem === 'voz' ? 'por voz' : 'digitado'}</span><span class="grow"></span><button class="btn ghost sm danger" data-rm="${i}">remover</button></div>${formHtml(it, i)}</div>`).join('');
+}
+bindForm($('#preview'), i => S.draft[i], renderPreview);
+$('#preview').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { S.draft.splice(+b.dataset.rm, 1); renderPreview(); } });
+function interpret(text, origem) {
+  const items = parseTexto(text, origem);
+  if (!items.length) { toast('Não consegui interpretar. Tente: “limpeza de pele cliente Ana dia 20 às 15h”.', 3500); return; }
+  S.draft.push(...items); renderPreview(); $('#previewBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+$('#btnInterpretar').onclick = () => { const t = $('#entrada').value.trim(); if (t) { interpret(t, 'texto'); $('#entrada').value = ''; } };
+const blank = () => ({ id: uid(), date: '', hora: '', duracao: +S.config.duracao || 60, cliente: '', telefone: '', procedimento: '', categoria: 'Facial', retorno: false, sessao: '', ultimo: '', valor: '', obs: '', status: 'Agendado', origem: 'texto', notas: [] });
+$('#btnManual').onclick = () => { S.draft.push(blank()); renderPreview(); };
+$('#btnDescartar').onclick = () => { S.draft = []; renderPreview(); };
+const clean = it => { const o = Object.assign({}, it); delete o.notas; delete o._pend; delete o._retExplicito; delete o._novo; o.retorno = !!o.retorno; o.duracao = +o.duracao || 60; o.valor = o.valor === '' || o.valor == null ? '' : +o.valor; return o; };
+async function salvarNovos(items) {
+  try {
+    const r = await call('add', { items }); S.items.push(...r.items); S.online = true;
+    toast(mode() === 'local' ? 'Salvo neste aparelho' : (items.length > 1 ? items.length + ' atendimentos agendados' : 'Agendado no Google Agenda e na planilha'));
+  } catch (e) {
+    if (e instanceof ApiError) { toast(e.message, 4000); return false; }
+    S.pending.push(...items); S.online = false; toast('Sem conexão: guardado no aparelho e será enviado depois', 3500);
+  }
+  saveCache(); renderAll(); return true;
+}
+$('#btnSalvar').onclick = async () => {
+  if (S.draft.find(it => !it.date || !it.procedimento || !it.cliente)) { toast('Há atendimento sem data, cliente ou procedimento.'); return; }
+  const btn = $('#btnSalvar'); btn.disabled = true; btn.textContent = 'Salvando…';
+  if (await salvarNovos(S.draft.map(clean))) { S.draft = []; renderPreview(); }
+  btn.disabled = false; btn.textContent = 'Salvar na agenda';
+};
+
+/* microfone */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, listening = false, finalText = '';
+function micFallback(msg) { $('#micHint').innerHTML = esc(msg) + ' Toque no campo abaixo e use o <b>microfone do teclado</b> para ditar.'; $('#entrada').focus(); }
+$('#btnMic').onclick = () => {
+  if (!SR) { micFallback('Este navegador não oferece reconhecimento de voz direto.'); return; }
+  if (listening) { rec && rec.stop(); return; }
+  rec = new SR(); rec.lang = 'pt-BR'; rec.interimResults = true; rec.continuous = false; finalText = '';
+  rec.onstart = () => { listening = true; $('#btnMic').classList.add('listening'); $('#micHint').textContent = 'Ouvindo…'; };
+  rec.onresult = ev => { let interim = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) { if (ev.results[i].isFinal) finalText += ev.results[i][0].transcript + ' '; else interim += ev.results[i][0].transcript; } $('#interim').textContent = (finalText + interim).trim(); };
+  rec.onerror = ev => {
+    if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') micFallback('Microfone bloqueado neste modo.');
+    else if (ev.error === 'no-speech') $('#micHint').textContent = 'Não ouvi nada. Toque e tente de novo.';
+    else if (ev.error === 'network') micFallback('O reconhecimento de voz precisa de internet.');
+    else $('#micHint').textContent = 'Erro no microfone: ' + ev.error;
+  };
+  rec.onend = () => {
+    listening = false; $('#btnMic').classList.remove('listening'); const t = finalText.trim();
+    if (t) { $('#micHint').textContent = 'Entendi: “' + t + '”'; $('#interim').textContent = ''; interpret(t, 'voz'); }
+    else if (/Ouvindo/.test($('#micHint').textContent)) $('#micHint').textContent = 'Toque e fale: cliente, procedimento, data e horário';
+  };
+  try { rec.start(); } catch (e) { micFallback('Não foi possível iniciar o microfone.'); }
+};
+
+/* ---------- cartões ---------- */
+function waLink(it) {
+  let d = String(it.telefone || '').replace(/\D/g, ''); if (!d) return '';
+  if (d.length <= 11) d = '55' + d;
+  const nome = (it.cliente || '').split(' ')[0];
+  const txt = `Olá, ${nome}! Aqui é da Estetfisio La Santé. Passando para confirmar seu atendimento de ${it.procedimento} ${it.date === today() ? 'hoje' : 'no dia ' + shortDate(it.date).toLowerCase()}${it.hora ? ' às ' + it.hora : ''}. Podemos confirmar?`;
+  return 'https://wa.me/' + d + '?text=' + encodeURIComponent(txt);
+}
+function evCard(it, opts) {
+  opts = opts || {};
+  if (it._g) return `<div class="ev g bl-Google"><div class="h">${it.hora || '—'}<small>${it.fim ? 'até ' + it.fim : 'dia todo'}</small></div><div class="d"><b>${esc(it.title)}</b><span class="small muted">Google Agenda (principal)</span></div></div>`;
+  const closed = it.status !== 'Agendado'; const wa = waLink(it);
+  const ult = it.ultimo || (() => { const u = ultimoRegistrado(it.cliente, it.date, it.id); return u ? br(u.date) + ' — ' + u.procedimento : ''; })();
+  return `<div class="ev bl-${catCls(it.categoria)} ${closed ? 'closed' : ''}">
+    <div class="h">${it.hora || '—'}<small>${opts.showDate ? shortDate(it.date) : (it.duracao || 60) + ' min'}</small></div>
+    <div class="d"><b>${esc(it.cliente || 'Cliente')}</b><div class="p">${esc(it.procedimento)}</div>
+      <div class="tags"><span class="tag c-${catCls(it.categoria)}">${esc(it.categoria)}</span>${it.retorno ? '<span class="tag ret">retorno</span>' : ''}${it.sessao ? `<span class="tag ses">sessão ${esc(it.sessao)}</span>` : ''}${it.valor !== '' && it.valor != null ? `<span class="tag ses">${BRL(it.valor)}</span>` : ''}<span class="st st-${it.status}">${it.status}${it._pend ? ' · envio pendente' : ''}</span></div>
+      ${ult ? `<div class="u">Último atendimento: ${esc(ult)}</div>` : ''}
+      ${opts.acts === false ? '' : `<div class="acts">
+        ${!closed ? `<button class="btn sm" data-act="done" data-id="${esc(it.id)}">Realizado</button>` : `<button class="btn sm" data-act="reopen" data-id="${esc(it.id)}">Reabrir</button>`}
+        ${wa && !closed ? `<a class="btn sm" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+        <button class="btn sm" data-act="edit" data-id="${esc(it.id)}">Editar</button>
+        <button class="btn sm gold" data-act="ret" data-id="${esc(it.id)}">Retorno</button>
+        ${mode() === 'local' && !closed ? `<a class="btn sm" target="_blank" rel="noopener" href="${gcalLink(it)}">Google Agenda</a>` : ''}
+        <button class="btn sm danger" data-act="del" data-id="${esc(it.id)}">Excluir</button></div>`}
+    </div></div>`;
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const id = b.dataset.id; const it = allItems().find(x => x.id === id); if (!it) return;
+  const act = b.dataset.act;
+  if (act === 'edit') return openSheet('edit', Object.assign({ notas: [] }, it));
+  if (act === 'ret') {
+    const n = Object.assign(blank(), { cliente: it.cliente, telefone: it.telefone, procedimento: it.procedimento, categoria: it.categoria, retorno: true, _retExplicito: true, duracao: it.duracao,
+      ultimo: br(it.date) + ' — ' + it.procedimento, notas: ['Retorno de ' + it.procedimento + ' (' + br(it.date) + '). Escolha a data abaixo.'] });
+    return openSheet('new', n);
+  }
+  if (act === 'del') {
+    if (!b.classList.contains('armed')) { b.classList.add('armed'); b.textContent = 'Confirmar'; setTimeout(() => { b.classList.remove('armed'); b.textContent = 'Excluir'; }, 3500); return; }
+    if (it._pend) { S.pending = S.pending.filter(p => p.id !== id); saveCache(); renderAll(); return; }
+    try { await call('delete', { id }); S.items = S.items.filter(x => x.id !== id); saveCache(); renderAll(); toast('Excluído da planilha e da agenda'); }
+    catch (err) { toast('Não foi possível excluir: ' + err.message, 3500); }
+    return;
+  }
+  if (act === 'done' || act === 'reopen') await atualizar({ id, status: act === 'done' ? 'Realizado' : 'Agendado' }, act === 'done' ? 'Marcado como realizado' : 'Reaberto');
+});
+async function atualizar(patch, msg) {
+  const p = S.pending.find(x => x.id === patch.id);
+  if (p) { Object.assign(p, patch); saveCache(); renderAll(); return true; }
+  try { const r = await call('update', { item: patch }); S.items = S.items.map(x => x.id === patch.id ? Object.assign({}, x, r.item || patch) : x); saveCache(); renderAll(); if (msg) toast(msg); return true; }
+  catch (err) { toast('Não foi possível salvar: ' + err.message, 3500); return false; }
+}
+
+/* folha inferior: edição, novo retorno e ficha da cliente */
+let sheetMode = null;
+function openSheet(m, it) {
+  sheetMode = m; S.editing = it;
+  $('#sheetTitle').textContent = m === 'new' ? 'Agendar retorno' : 'Editar atendimento';
+  $('#sheetActs').style.display = 'flex'; $('#btnSheetSave').style.display = '';
+  const render = () => { $('#sheetBody').innerHTML = formHtml(S.editing, 0); };
+  $('#sheetBody').__render = render; render(); $('#sheet').classList.add('on');
+}
+bindForm($('#sheetBody'), () => S.editing, () => $('#sheetBody').__render && $('#sheetBody').__render());
+$('#btnSheetCancel').onclick = () => $('#sheet').classList.remove('on');
+$('#sheet').onclick = e => { if (e.target.id === 'sheet') $('#sheet').classList.remove('on'); };
+$('#btnSheetSave').onclick = async () => {
+  const it = clean(S.editing);
+  if (!it.date || !it.procedimento || !it.cliente) { toast('Informe cliente, procedimento e data'); return; }
+  const ok = sheetMode === 'new' ? await salvarNovos([it]) : await atualizar(it, 'Alterações salvas');
+  if (ok) $('#sheet').classList.remove('on');
+};
+function openCliente(k) {
+  const h = allItems().filter(i => keyCli(i.cliente) === k).sort((a, b) => sortIt(b, a)); if (!h.length) return;
+  const nome = h[0].cliente; const tel = (h.find(i => i.telefone) || {}).telefone || '';
+  sheetMode = 'cliente';
+  $('#sheetTitle').textContent = nome;
+  const real = h.filter(i => i.status === 'Realizado'); const u = ultimoRegistrado(nome);
+  const prox = h.filter(i => i.status === 'Agendado' && i.date >= today()).sort(sortIt)[0];
+  const total = real.reduce((a, i) => a + (+i.valor || 0), 0);
+  $('#sheetBody').innerHTML = `
+    <div class="small muted">${tel ? esc(tel) + ' · ' : ''}${h.length} registro(s)</div>
+    <div class="kpis" style="margin:12px 0">
+      <div class="kpi"><div class="l">Último atendimento</div><div class="n" style="font-size:20px">${u ? br(u.date) : '—'}</div><div class="small">${u ? esc(u.procedimento) + ' · há ' + daysBetween(u.date, today()) + ' dias' : ''}</div></div>
+      <div class="kpi"><div class="l">Próximo</div><div class="n" style="font-size:20px">${prox ? br(prox.date) : '—'}</div><div class="small">${prox ? esc(prox.procedimento) + (prox.hora ? ' · ' + prox.hora : '') : ''}</div></div>
+      <div class="kpi"><div class="l">Realizados</div><div class="n">${real.length}</div></div>
+      <div class="kpi"><div class="l">Valor registrado</div><div class="n" style="font-size:20px">${BRL(total)}</div></div>
+    </div>
+    <div class="row wrap" style="margin-bottom:8px"><button class="btn primary sm" id="cliNovo">Novo agendamento</button>${tel ? `<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/${tel.replace(/\D/g, '').length <= 11 ? '55' : ''}${tel.replace(/\D/g, '')}">WhatsApp</a>` : ''}</div>
+    <div class="grp">Histórico</div>${h.map(i => evCard(i, { showDate: true })).join('')}`;
+  $('#btnSheetSave').style.display = 'none';
+  $('#sheet').classList.add('on');
+  $('#cliNovo').onclick = () => openSheet('new', Object.assign(blank(), { cliente: nome, telefone: tel, ultimo: u ? br(u.date) + ' — ' + u.procedimento : '', notas: u ? ['Último atendimento registrado: ' + br(u.date) + ' — ' + u.procedimento + '.'] : [] }));
+}
+
+/* ---------- início ---------- */
+function renderHero() {
+  const h = new Date().getHours(); const saud = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
+  const ag = allItems().filter(i => i.status === 'Agendado');
+  const n0 = ag.filter(i => i.date === today()).length, n1 = ag.filter(i => i.date === iso(addDays(new Date(), 1))).length;
+  const [a, b] = weekRange(today()); const nw = ag.filter(i => i.date >= a && i.date <= b).length;
+  $('#hero').innerHTML = `<div class="hi">${saud}, Dra. Edianne</div><div class="hs">${longDate(today())}</div>
+    <div class="kp"><div><b>${n0}</b><span>hoje</span></div><div><b>${n1}</b><span>amanhã</span></div><div><b>${nw}</b><span>na semana</span></div></div>`;
+}
+function renderAlertas() {
+  const ag = allItems().filter(i => i.status === 'Agendado').sort(sortIt);
+  const h = today(), a1 = iso(addDays(new Date(), 1)), a2 = iso(addDays(new Date(), 2));
+  const grupos = [['Hoje', ag.filter(i => i.date === h)], ['Amanhã', ag.filter(i => i.date === a1)], ['Depois de amanhã', ag.filter(i => i.date === a2)],
+    ['Sem baixa', ag.filter(i => i.date < h)]];
+  const n = grupos[0][1].length + grupos[1][1].length; const badge = $('#badge'); badge.textContent = n; badge.style.display = n ? 'block' : 'none';
+  const html = grupos.filter(g => g[1].length).map(g => `<div class="grp">${g[0]} <span class="n">${g[1].length}${g[0] === 'Sem baixa' ? ' · marque como realizado, faltou ou cancelado' : ''}</span></div>` + g[1].map(i => evCard(i, { showDate: g[0] === 'Sem baixa' })).join('')).join('');
+  $('#alertas').innerHTML = html || '<div class="empty">Nenhum atendimento nos próximos dois dias.</div>';
+}
+
+/* ---------- agenda ---------- */
+function weekRange(d) { const r = fromIso(d); const ini = addDays(r, -((r.getDay() + 6) % 7)); return [iso(ini), iso(addDays(ini, 6))]; }
+function dayItems(d) {
+  const own = allItems().filter(i => i.date === d);
+  const g = S.google.filter(x => x.date === d).map(x => Object.assign({ _g: true }, x));
+  return own.concat(g).sort((a, b) => (a.hora || '00').localeCompare(b.hora || '00'));
+}
+function renderLegend() { $('#legend').innerHTML = CATS.concat(mode() === 'local' ? [] : ['Google']).map(c => `<span class="tag c-${catCls(c)}">${c === 'Google' ? 'Google Agenda' : c}</span>`).join(''); }
+function resumoPeriodo(list) {
+  const real = list.filter(i => i.status === 'Realizado'), ag = list.filter(i => i.status === 'Agendado'), falt = list.filter(i => i.status === 'Faltou' || i.status === 'Cancelado');
+  const cont = {}; real.concat(ag).forEach(i => { const k = i.procedimento.split(' — ')[0]; cont[k] = (cont[k] || 0) + 1; });
+  const top = Object.entries(cont).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  return `<div class="card"><div class="kpis">
+    <div class="kpi"><div class="l">Realizados</div><div class="n">${real.length}</div></div>
+    <div class="kpi"><div class="l">Agendados</div><div class="n">${ag.length}</div></div>
+    <div class="kpi"><div class="l">Faltas e cancelamentos</div><div class="n">${falt.length}</div></div>
+    <div class="kpi"><div class="l">Valor realizado</div><div class="n" style="font-size:21px">${BRL(real.reduce((a, i) => a + (+i.valor || 0), 0))}</div></div></div>
+    ${top.length ? `<div class="small muted" style="margin-top:10px">Mais procurados: ${top.map(([p, n]) => esc(p) + ' (' + n + ')').join(' · ')}</div>` : ''}</div>`;
+}
+function renderAgenda() {
+  $$('#seg button').forEach(b => b.classList.toggle('on', b.dataset.v === S.view));
+  const r = fromIso(S.ref); const el = $('#agenda');
+  if (S.view === 'semana') {
+    const [a] = weekRange(S.ref); const ini = fromIso(a);
+    $('#navLabel').textContent = br(a).slice(0, 5) + ' a ' + br(iso(addDays(ini, 6))).slice(0, 5);
+    el.innerHTML = [...Array(7)].map((_, k) => {
+      const d = iso(addDays(ini, k)); const its = dayItems(d);
+      return `<div class="day"><div class="dh ${d === today() ? 'today' : ''}"><span>${longDate(d)}</span><span>${its.length || ''}</span></div>${its.map(i => evCard(i)).join('') || '<div class="small muted" style="padding:0 4px 4px">—</div>'}</div>`;
+    }).join('');
+  } else if (S.view === 'mes') {
+    const y = r.getFullYear(), mo = r.getMonth(); const ym = y + '-' + pad(mo + 1);
+    $('#navLabel').textContent = cap(MESES[mo]) + ' ' + y;
+    const first = new Date(y, mo, 1, 12); const start = addDays(first, -((first.getDay() + 6) % 7));
+    let cells = ['seg','ter','qua','qui','sex','sáb','dom'].map(w => `<div class="wd">${w}</div>`).join('');
+    for (let k = 0; k < 42; k++) {
+      const dd = addDays(start, k); const d = iso(dd); if (k >= 35 && dd.getMonth() !== mo) break;
+      const its = dayItems(d).filter(i => i._g || i.status !== 'Cancelado');
+      cells += `<div class="cell ${dd.getMonth() !== mo ? 'out' : ''} ${d === today() ? 'today' : ''} ${d === S.sel ? 'sel' : ''}" data-day="${d}"><span class="n">${dd.getDate()}</span><span class="dots">${its.slice(0, 8).map(i => `<i class="c-${i._g ? 'Google' : catCls(i.categoria)}"></i>`).join('')}</span></div>`;
+    }
+    const sel = dayItems(S.sel);
+    el.innerHTML = resumoPeriodo(allItems().filter(i => i.date.startsWith(ym))) + `<div class="grid">${cells}</div><div class="day"><div class="dh"><span><b>${longDate(S.sel)}</b></span></div>${sel.map(i => evCard(i)).join('') || '<div class="empty">Agenda livre neste dia.</div>'}</div>`;
+  } else {
+    const y = r.getFullYear(); $('#navLabel').textContent = String(y);
+    const its = allItems().filter(i => i.date.startsWith(y + '-'));
+    el.innerHTML = resumoPeriodo(its) + '<div class="year">' + MESES.map((mn, k) => {
+      const ym = y + '-' + pad(k + 1); const list = its.filter(i => i.date.startsWith(ym) && i.status !== 'Cancelado');
+      const real = list.filter(i => i.status === 'Realizado').length;
+      const segs = CATS.map(c => [c, list.filter(i => i.categoria === c).length]).filter(x => x[1]);
+      return `<div class="mcard ${ym === today().slice(0, 7) ? 'cur' : ''}" data-month="${ym}"><b>${cap(mn.slice(0, 3))}</b><div class="big">${list.length}</div><div class="small muted">${real} realizado${real === 1 ? '' : 's'}</div>
+        <div class="bar">${segs.map(([c, n]) => `<span class="c-${catCls(c)}" style="width:${n / list.length * 100}%"></span>`).join('')}</div></div>`;
+    }).join('') + '</div>';
+  }
+}
+$('#agenda').addEventListener('click', e => {
+  const c = e.target.closest('[data-day]'); if (c) { S.sel = c.dataset.day; renderAgenda(); return; }
+  const m = e.target.closest('[data-month]'); if (m) { S.view = 'mes'; S.ref = m.dataset.month + '-01'; S.sel = S.ref; renderAgenda(); load(); }
+});
+$('#seg').onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; S.view = b.dataset.v; renderAgenda(); load(); };
+$$('[data-nav]').forEach(b => b.onclick = () => {
+  const n = +b.dataset.nav, r = fromIso(S.ref);
+  if (S.view === 'semana') S.ref = iso(addDays(r, 7 * n));
+  else if (S.view === 'mes') { S.ref = iso(new Date(r.getFullYear(), r.getMonth() + n, 1, 12)); S.sel = S.ref; }
+  else S.ref = iso(new Date(r.getFullYear() + n, 0, 1, 12));
+  renderAgenda(); load();
+});
+
+/* ---------- clientes ---------- */
+function renderClientes() {
+  const q = plain(S.busca); const map = {};
+  for (const i of allItems()) { const k = keyCli(i.cliente); if (!k) continue; (map[k] = map[k] || []).push(i); }
+  const rows = Object.entries(map).map(([k, h]) => {
+    h.sort((a, b) => sortIt(b, a)); const nome = h[0].cliente; const u = ultimoRegistrado(nome);
+    const prox = h.filter(i => i.status === 'Agendado' && i.date >= today()).sort(sortIt)[0];
+    return { k, nome, u, prox, h, txt: plain(nome + ' ' + h.map(i => i.procedimento).join(' ')) };
+  }).filter(r => !q || r.txt.includes(q)).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  $('#clientes').innerHTML = rows.map(r => `<div class="cli" data-cli="${esc(r.k)}"><div class="av">${esc(r.nome.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase())}</div>
+    <div class="d"><b>${esc(r.nome)}</b><div class="small muted">Último: ${r.u ? br(r.u.date) + ' · ' + esc(r.u.procedimento) : '—'}</div>${r.prox ? `<div class="small" style="color:var(--brand)">Próximo: ${shortDate(r.prox.date)}${r.prox.hora ? ' ' + r.prox.hora : ''} · ${esc(r.prox.procedimento)}</div>` : ''}</div>
+    <span class="small muted">${r.h.length}</span></div>`).join('') || '<div class="empty">Nenhuma cliente encontrada.</div>';
+}
+$('#busca').oninput = e => { S.busca = e.target.value; renderClientes(); };
+$('#clientes').onclick = e => { const c = e.target.closest('[data-cli]'); if (c) openCliente(c.dataset.cli); };
+
+/* ---------- exportações ---------- */
+function gcalLink(it) {
+  const h = it.hora || '08:00'; const p = h.split(':').map(Number); const e = new Date(2000, 0, 1, p[0], p[1] + (+it.duracao || 60));
+  const d = it.date.replace(/-/g, '');
+  const q = new URLSearchParams({ action: 'TEMPLATE', text: it.procedimento + ' — ' + it.cliente + (it.retorno ? ' (retorno)' : ''), dates: d + 'T' + pad(p[0]) + pad(p[1]) + '00/' + d + 'T' + pad(e.getHours()) + pad(e.getMinutes()) + '00',
+    ctz: 'America/Fortaleza', details: [it.telefone && 'Telefone: ' + it.telefone, it.ultimo && 'Último atendimento: ' + it.ultimo, it.obs].filter(Boolean).join('\n') });
+  return 'https://calendar.google.com/calendar/render?' + q.toString();
+}
+function download(name, content, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], { type })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+$('#btnICS').onclick = () => {
+  const ie = s => String(s || '').replace(/\\/g, '\\\\').replace(/[,;]/g, m => '\\' + m).replace(/\n/g, '\\n');
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const evs = allItems().filter(i => i.status === 'Agendado' && i.date >= today()).map(i => {
+    const p = (i.hora || '08:00').split(':').map(Number); const e = new Date(2000, 0, 1, p[0], p[1] + (+i.duracao || 60)); const d = i.date.replace(/-/g, '');
+    const noDia = Math.min(+S.config.antecedencia || 120, p[0] * 60 + p[1] - 1);
+    const al = t => `BEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:${ie(i.procedimento)}\r\nTRIGGER:${t}\r\nEND:VALARM`;
+    return ['BEGIN:VEVENT', 'UID:' + i.id + '@lasante', 'DTSTAMP:' + stamp, 'DTSTART;TZID=America/Fortaleza:' + d + 'T' + pad(p[0]) + pad(p[1]) + '00',
+      'DTEND;TZID=America/Fortaleza:' + d + 'T' + pad(e.getHours()) + pad(e.getMinutes()) + '00', 'SUMMARY:' + ie(i.procedimento + ' — ' + i.cliente + (i.retorno ? ' (retorno)' : '')),
+      'DESCRIPTION:' + ie([i.telefone && 'Telefone: ' + i.telefone, i.ultimo && 'Último atendimento: ' + i.ultimo, i.obs].filter(Boolean).join('\n')),
+      al('-P2D'), al('-P1D'), al(noDia > 0 ? '-PT' + noDia + 'M' : 'PT0M'), 'END:VEVENT'].join('\r\n');
+  });
+  if (!evs.length) { toast('Não há atendimentos futuros agendados'); return; }
+  download('agenda-la-sante.ics', ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//La Sante//PT-BR', 'CALSCALE:GREGORIAN'].concat(evs, ['END:VCALENDAR']).join('\r\n'), 'text/calendar');
+};
+$('#btnCSV').onclick = () => {
+  const rows = [['Data', 'Hora', 'Duração', 'Cliente', 'Telefone', 'Procedimento', 'Categoria', 'Retorno', 'Sessão', 'Último atendimento', 'Valor', 'Status', 'Observações']]
+    .concat(allItems().sort(sortIt).map(i => [br(i.date), i.hora, i.duracao, i.cliente, i.telefone, i.procedimento, i.categoria, i.retorno ? 'Sim' : 'Não', i.sessao, i.ultimo, i.valor === '' ? '' : String(i.valor).replace('.', ','), i.status, i.obs]));
+  download('agenda-la-sante.csv', '﻿' + rows.map(r => r.map(x => '"' + String(x == null ? '' : x).replace(/"/g, '""') + '"').join(';')).join('\r\n'), 'text/csv');
+};
+
+/* ---------- ajustes ---------- */
+function renderAjustes() {
+  const m = mode();
+  $('#connFields').style.display = m === 'gas' ? 'none' : 'block';
+  $('#connInfo').innerHTML = m === 'gas' ? 'Aberto pelo próprio Apps Script: informe só o token.'
+    : m === 'local' ? 'Sem conexão com o Google: os atendimentos ficam só neste aparelho e não geram lembretes automáticos. Use o botão “Google Agenda” de cada atendimento ou exporte o arquivo .ics até concluir a instalação.'
+    : 'Conectado: cada atendimento vai para a planilha e para a agenda “La Santé — Atendimentos”.';
+  $('#apiUrl').value = S.settings.apiUrl || ''; $('#token').value = S.settings.token || '';
+  const l = $('#lnkPlanilha'); if (S.sheetUrl) { l.href = S.sheetUrl; l.style.display = ''; } else l.style.display = 'none';
+  $('#cfgDur').value = S.config.duracao || 60; $('#cfgAnt').value = S.config.antecedencia || 120; $('#cfgMail').checked = !!S.config.emailDiario; $('#cfgEmail').value = S.config.email || '';
+}
+$('#btnConectar').onclick = async () => {
+  S.settings.apiUrl = $('#apiUrl').value.trim(); S.settings.token = $('#token').value.trim(); store.set('ls_settings', S.settings);
+  if (mode() === 'local') { toast('Sem URL: o app segue em modo local.'); renderAll(); return; }
+  try { const r = await call('ping'); S.sheetUrl = r.sheetUrl; store.set('ls_sheet', r.sheetUrl); S.online = true; toast('Conectado'); renderAjustes(); await load(); }
+  catch (e) { S.online = false; setStatus(); toast('Falha na conexão: ' + e.message, 4500); }
+};
+$('#btnCfg').onclick = async () => {
+  const cfg = { duracao: +$('#cfgDur').value || 60, antecedencia: +$('#cfgAnt').value || 120, emailDiario: $('#cfgMail').checked, email: $('#cfgEmail').value.trim() };
+  S.config = Object.assign({}, S.config, cfg); store.set('ls_config', S.config);
+  try { const r = await call('setConfig', { config: cfg }); if (r.config) S.config = Object.assign({}, DEF_CFG, r.config); toast('Ajustes salvos'); }
+  catch (e) { toast('Salvo só no aparelho: ' + e.message, 3500); }
+  renderAll();
+};
+$('#btnTestMail').onclick = async () => { try { await call('testEmail'); toast('E-mail de teste enviado'); } catch (e) { toast(e.message, 4000); } };
+$('#btnPend').onclick = () => syncPending(false);
+$('#btnSync').onclick = async () => { toast('Atualizando…'); await syncPending(true); await load(); };
+window.addEventListener('online', () => syncPending(true));
+$$('nav.bottom button').forEach(b => b.onclick = () => {
+  $$('nav.bottom button').forEach(x => x.classList.toggle('on', x === b));
+  $$('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + b.dataset.tab));
+  if (b.dataset.tab === 'ajustes') renderAjustes();
+  window.scrollTo(0, 0);
+});
+
+function renderAll() { setStatus(); renderHero(); renderLegend(); renderAlertas(); renderAgenda(); renderClientes(); }
+if ('serviceWorker' in navigator && location.protocol === 'https:' && mode() !== 'gas') navigator.serviceWorker.register('sw.js').catch(() => {});
+renderAll();
+load();
+</script>
+</body>
+</html>

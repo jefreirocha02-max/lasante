@@ -1,0 +1,16 @@
+{
+  "name": "La Santé — Agenda",
+  "short_name": "La Santé",
+  "description": "Agenda de atendimentos da Estetfisio La Santé (Dra. Edianne Rocha), com registro por voz, Google Agenda e planilha.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f1ec",
+  "theme_color": "#4a2633",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
